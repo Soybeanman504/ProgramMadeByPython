@@ -1,0 +1,23 @@
+import re
+import random
+import requests
+from bs4 import BeautifulSoup
+
+#単語
+words = list(range(30)) # 30回で打ち切り
+words[0] = input() #最初の単語を入力させる
+
+for i in range(len(words)-1):
+    # WebサイトのURLを指定
+    url ='https://renso-ruigo.com/word/' + words[i]
+
+    # Requestsを利用してWebページを取得する
+    request = requests.get(url)
+
+    # BeautifulSoupを利用してWebページを解析する
+    soup = BeautifulSoup(request.text, 'html.parser')
+
+    elements = soup.body.find_all('a' ,href=re.compile('https://renso-ruigo.com/word/'))
+    
+    words[i + 1] = random.choice(elements).text
+    print(words[i + 1])
