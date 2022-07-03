@@ -82,6 +82,8 @@ def get_dialogue_int(main_soup):
 
     sep_chr = '：'
     del_chrs = ['\n', '　']
+    sta_chrs = ['（']
+    fin_chrs = ['）']
     end_chrs = '。！？〜～）'
 
     for value in font_tag:
@@ -94,14 +96,17 @@ def get_dialogue_int(main_soup):
             end_n = end_find(text, end_chrs)
 
             while end_n > -1:
-                next_end_n = end_find(text[end_n + 1:], end_chrs)
-
-                while next_end_n == 0:
+                while end_n < len(text) and match_characters(text[end_n], end_chrs):
+                    if match_characters(text[end_n], fin_chrs):
+                        end_n += 1
+                        if match_characters(text[0], sta_chrs):
+                            break
+                        else:
+                            end_n += end_find(text[end_n:], end_chrs)
                     end_n += 1
-                    next_end_n = end_find(text[end_n + 1:], end_chrs)
-
-                texts.append(name + sep_chr + text[:end_n + 1])
-                text = text[end_n + 1:]
+                
+                texts.append(name + sep_chr + text[:end_n])
+                text = text[end_n:]
                 end_n = end_find(text, end_chrs)
 
             if len(text) > 0:
